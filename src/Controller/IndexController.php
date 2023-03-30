@@ -11,6 +11,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Form\ArticleType;
+use App\Entity\Category;
+use App\Form\CategoryType;
 
 class IndexController extends AbstractController
 {
@@ -42,52 +44,39 @@ return $this->render('articles/index.html.twig',['articles'=> $articles]);
   
    public function new(Request $request) {
       $article = new Article();
-      $form = $this->createFormBuilder($article)
-      ->add('nom', TextType::class)
-      ->add('prix', TextType::class)
-      ->add('save', SubmitType::class, array('label' => 'Créer')
-      )->getForm();
-      
-      
+      $form = $this->createForm(ArticleType::class,$article);
       $form->handleRequest($request);
-      
       if($form->isSubmitted() && $form->isValid()) {
       $article = $form->getData();
-      
-      $entityManager = $this->getDoctrine()->getManager();
+      $entityManager = $this->entityManager->getManager();
       $entityManager->persist($article);
       $entityManager->flush();
-      
       return $this->redirectToRoute('article_list');
       }
-      return $this->render('articles/new.html.twig',['form' => $form->createView()]);
-      }
+      return $this->render('articles/new.html.twig',['form' => $form->createView()]);}
+
+
 public function show($id) {
          $article = $this->entityManager->getRepository(Article::class)->find($id);
          return $this->render('articles/show.html.twig', array('article' => $article));
               }
 
-              public function edit(Request $request, $id) {
-               $article = new Article();
-               $article = $this->entityManager->getRepository(Article::class)->find($id);
-               
-               $form = $this->createFormBuilder($article)
-               ->add('nom', TextType::class)
-               ->add('prix', TextType::class)
-               ->add('save', SubmitType::class, array(
-               'label' => 'Modifier' 
-               ))->getForm();
-               
-               $form->handleRequest($request);
-               if($form->isSubmitted() && $form->isValid()) {
-               
-               $entityManager = $this->entityManager->getManager();
-               $entityManager->flush();
-               
-               return $this->redirectToRoute('article_list');
-               }
-               return $this->render('articles/edit.html.twig', ['form' => $form->createView()]);
-                }
+public function edit(Request $request, $id) {
+        $article = new Article();
+        $article = $this->entityManager->getRepository(Article::class)->find($id);
+                
+        $form = $this->createForm(ArticleType::class,$article);
+                
+                $form->handleRequest($request);
+                if($form->isSubmitted() && $form->isValid()) {
+                
+                $entityManager = $this->entityManager->getManager();
+                $entityManager->flush();
+                
+                return $this->redirectToRoute('article_list');} 
+                return $this->render('articles/edit.html.twig', ['form' => $form->createView()]);
+                
+            }    
 
                 public function delete(Request $request, $id) {
                   $article = $this->entityManager->getRepository(Article::class)->find($id);
@@ -100,6 +89,20 @@ public function show($id) {
                   $response->send();
                   return $this->redirectToRoute('article_list');
                   }    
+
+                  public function newCategory(Request $request) {
+                     $category = new Category();
+                     $form = $this->createForm(CategoryType::class,$category);
+                     $form->handleRequest($request);
+                     if($form->isSubmitted() && $form->isValid()) {
+                     $article = $form->getData();
+                     $entityManager = $this->entityManager->getManager();
+                     $entityManager->persist($category);
+                     $entityManager->flush();
+                     }  
+                     return $this->render('articles/newCategory.html.twig',['form'=>$form->createView()]);
+                      }
+                               
                                         
      
 }
