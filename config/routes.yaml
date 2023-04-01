@@ -29,3 +29,11 @@ delete_article:
 new_category:
  path: /category/newCat
  controller: App\Controller\IndexController::newCategory
+
+article_par_cat:
+ path: /art_cat
+ controller: App\Controller\IndexController::articlesParCategorie
+
+article_par_prix:
+ path: /art_prix/
+ controller: App\Controller\IndexController::articlesParPrix
